@@ -26,5 +26,4 @@ main(int argc, char **argv)
    }
 }
  
-/* compile with  command line gcc -O lpt_read.c -o lpt_read */
-
+/* compile with  command line gcc -O readparallelport.c -o readparallelport */
