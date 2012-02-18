@@ -27,16 +27,14 @@ main(int argc, char **argv)
 
    for(;;)
    {
-      flag = inb(stat);
-      flag = flag & 0x40;
+      flag = inb(stat) & 0x40;
       if(flag == 0x40)
       {
          value = inb(base);
          printf("Port 0x%x read value is %x %c\n",base,value,value);
          while(flag)
          {
-         flag = inb(stat);
-         flag = flag & 0x40;
+            flag = inb(stat) & 0x40;
          }               }
    }}
  
