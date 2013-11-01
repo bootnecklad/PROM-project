@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/io.h>
-#include <asm/io.h>
 
 #define base 0x378 /* I/O address to read */
 #define stat 0x379 /* Status register */
@@ -22,11 +21,11 @@ main(int argc, char **argv)
       fprintf(stderr, "Couldn't get the port at %x\n", base)
       exit(1);
    }
-   if (ioperm(base,1,1)) {
+      if (ioperm(base,1,1)) {
       fprintf(stderr, "Couldn't get the port at %x\n", stat)
       exit(1);
    }
-   if (ioperm(base,1,1)) {
+      if (ioperm(base,1,1)) {
       fprintf(stderr, "Couldn't get the port at %x\n", ctrl)
       exit(1);
    }
@@ -35,7 +34,7 @@ main(int argc, char **argv)
    if (fp == NULL) {
       printf("Error opening EPROM.txt\n");
       exit(0);
-   }
+   }   
 
    outb(read,ctrl);
 

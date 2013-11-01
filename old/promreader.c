@@ -11,7 +11,7 @@
 #define false 0
 
 
-int main(int argc, char **argv)
+main(int argc, char **argv)
 {
    int value;
    char flag;
