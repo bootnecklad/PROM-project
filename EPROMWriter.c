@@ -40,12 +40,12 @@
     0xf bit is WRITE BYTE HIGH
 
     // steps for writing eprom
-	//   output address LOW
-	//   pulse ctrl 0x10
-	//   output address HIGH
-	//   pulse ctrl 0x20
-	//   output byte
-	//   pulse 0x01 [PROGRAM]
+    //   output address LOW
+    //   pulse ctrl 0x10
+    //   output address HIGH
+    //   pulse ctrl 0x20
+    //   output byte
+    //   pulse 0x01 [PROGRAM]
 
 */
 
@@ -65,28 +65,28 @@ void writeEPROM(FILE* inputFile)
 
   while(fscanf(inputFile, "%x %c %x %x %x %x", &address, &seperator, &inputBytes[0], &inputBytes[1], &inputBytes[2], &inputBytes[3]) == 6)
   {
-	printf("%x %x %x %x %x\n", address, inputBytes[0], inputBytes[1], inputBytes[2], inputBytes[3]); // Displays current line to console
+    printf("%x %x %x %x %x\n", address, inputBytes[0], inputBytes[1], inputBytes[2], inputBytes[3]); // Displays current line to console
 
-	for(byteCount=0; byteCount<5; byteCount++)
-	{
-	  address = address + byteCount; // Matches correct address to correct bytes
+    for(byteCount=0; byteCount<5; byteCount++)
+    {
+      address = address + byteCount; // Matches correct address to correct bytes
 
       outb(address & 0xFF00, base); // Outputs low byte of address
       writeControl(0x0C, 100); // Writes low byte of address to register
 
       outb(address & 0x0FF, base); // Outputs high byte of address
-	  writeControl(0x0D, 100); // Writes high byte of address to register
+      writeControl(0x0D, 100); // Writes high byte of address to register
 
-	  outb(inputBytes[byteCount] & 0xFF00, base); // Outputs low byte to be written
-	  writeControl(0x0E, 100); // Writes low byte of byte
+      outb(inputBytes[byteCount] & 0xFF00, base); // Outputs low byte to be written
+      writeControl(0x0E, 100); // Writes low byte of byte
 
-	  outb(inputBytes[byteCount] & 0x00FF, base); // Outputs high byte to be written
-	  writeControl(0x0E, 100); // Writes high byte of byte
+      outb(inputBytes[byteCount] & 0x00FF, base); // Outputs high byte to be written
+      writeControl(0x0E, 100); // Writes high byte of byte
 
-	  writeControl(0xFF, 100); // SOMETHING PREPARING, SWITCH VOLTAGE ON?
-	  writeControl(0x01, WRITE_TIME_PERIOD); // Actually writes byte to EPROM
-	  writeControl(0xFF, 100); // SOMETHING, SWITCH VOLTAGE OFF?
-	}
+      writeControl(0xFF, 100); // SOMETHING PREPARING, SWITCH VOLTAGE ON?
+      writeControl(0x01, WRITE_TIME_PERIOD); // Actually writes byte to EPROM
+      writeControl(0xFF, 100); // SOMETHING, SWITCH VOLTAGE OFF?
+    }
 
   }
   fclose(inputFile);
@@ -95,30 +95,30 @@ void writeEPROM(FILE* inputFile)
 
 void writeControl(int hexCommand, int timePeriod)
 {
-	outb(hexCommand, ctrl); // Sets line high
-	msleep(timePeriod); // Time period
-	outb(0x00, ctrl); // Sets line low
+  outb(hexCommand, ctrl); // Sets line high
+  msleep(timePeriod); // Time period
+  outb(0x00, ctrl); // Sets line low
 }
 
 void msleep(int milliseconds)
 {
-      usleep(milliseconds * 1000);
+  usleep(milliseconds * 1000);
 }
 
 
 int checkPorts()
 {
   if (ioperm(base,1,1)) {
-     fprintf(stderr, "Couldn't get the port at %x\n", base);
-     return(1);
+    fprintf(stderr, "Couldn't get the port at %x\n", base);
+    return(1);
   }
   if (ioperm(base,1,1)) {
-     fprintf(stderr, "Couldn't get the port at %x\n", stat);
-     return(1);
+    fprintf(stderr, "Couldn't get the port at %x\n", stat);
+    return(1);
   }
   if (ioperm(base,1,1)) {
-     fprintf(stderr, "Couldn't get the port at %x\n", ctrl);
-     return(1);
+    fprintf(stderr, "Couldn't get the port at %x\n", ctrl);
+    return(1);
   }
 
   return(0);
@@ -158,26 +158,26 @@ int main(int argc, char** argv)
       return(1); // Not successful :(
     }
 
-	printf("\nOpening file %s...\n", argv[1]);
-	inputFile = fopen(argv[1], "r"); // Opens input file
+    printf("\nOpening file %s...\n", argv[1]);
+    inputFile = fopen(argv[1], "r"); // Opens input file
 
-	printf("\nChecking ports ...\n");
-	if(checkPorts() == 1) // Checks if parallel ports is accessible
-	{
-	  return(1);
-	}
+    printf("\nChecking ports ...\n");
+    if(checkPorts() == 1) // Checks if parallel ports is accessible
+    {
+      return(1);
+    }
 
-	printf("\nChecking if hardware is ready...\n");
-	if(checkReady() == 1) // Checks if hardware is ready
-	{
-	  return(1);
-	}
+    printf("\nChecking if hardware is ready...\n");
+    if(checkReady() == 1) // Checks if hardware is ready
+    {
+      return(1);
+    }
 
-	printf("\nAre you sure you want to burn this EPROM? [y/n]\n");
+    printf("\nAre you sure you want to burn this EPROM? [y/n]\n");
     if(getch() == 'y')
-	{
-	  writeEPROM(inputFile); // Starts writing to the EPROM
-	}
+    {
+      writeEPROM(inputFile); // Starts writing to the EPROM
+    }
 
   } else {
     printf("Usage: %s input-file\n", argv[0]);
@@ -194,12 +194,12 @@ displayMachineCode things previously used
   //char thing, address[5];
   //int inputBytes[3], tempBytes[3];
   //char address[5], thing;// inputBytes[4][3];
-  	//printf("%s %s %s %s %s\n", address, inputBytes[0], inputBytes[1], inputBytes[2], inputBytes[3]);
-	//for(i=0, i<4, i++)
-	//{
-	//  tempBytes[i] =
-	//number = strtol(byteOne, NULL, 16);
-	//printf("%x\n", number);
-	//number = strtol(address, NULL, 16);
-	//printf("%x\n", number & 0x00FF);
+  //printf("%s %s %s %s %s\n", address, inputBytes[0], inputBytes[1], inputBytes[2], inputBytes[3]);
+//for(i=0, i<4, i++)
+//{
+//  tempBytes[i] =
+//number = strtol(byteOne, NULL, 16);
+//printf("%x\n", number);
+//number = strtol(address, NULL, 16);
+//printf("%x\n", number & 0x00FF);
 */
