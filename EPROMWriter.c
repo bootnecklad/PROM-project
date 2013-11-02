@@ -9,12 +9,11 @@
 #include <unistd.h>
 //#include <sys/io.h>
 
-#define base 0x378 /* I/O address to read */
-#define stat 0x379 /* Status register */
-#define ctrl 0x37A /* Control register */
-#define read 32    /* Read I/O port command*/
-#define true 1
-#define false 0
+#define BASE 0x378 /* I/O address to read */
+#define STAT 0x379 /* Status register */
+#define CTRL 0x37A /* Control register */
+#define TRUE 1
+#define FALSE 0
 
 #define WRITE_TIME_PERIOD 100 // number of milli seconds that EPROM needs to write value for
 
@@ -41,9 +40,9 @@
 
     // steps for writing eprom
     //   output address LOW
-    //   pulse ctrl 0x10
+    //   pulse CTRL 0x10
     //   output address HIGH
-    //   pulse ctrl 0x20
+    //   pulse CTRL 0x20
     //   output byte
     //   pulse 0x01 [PROGRAM]
 
@@ -71,16 +70,16 @@ void writeEPROM(FILE* inputFile)
     {
       address = address + byteCount; // Matches correct address to correct bytes
 
-      outb(address & 0xFF00, base); // Outputs low byte of address
+      outb(address & 0xFF00, BASE); // Outputs low byte of address
       writeControl(0x0C, 100); // Writes low byte of address to register
 
-      outb(address & 0x0FF, base); // Outputs high byte of address
+      outb(address & 0x0FF, BASE); // Outputs high byte of address
       writeControl(0x0D, 100); // Writes high byte of address to register
 
-      outb(inputBytes[byteCount] & 0xFF00, base); // Outputs low byte to be written
+      outb(inputBytes[byteCount] & 0xFF00, BASE); // Outputs low byte to be written
       writeControl(0x0E, 100); // Writes low byte of byte
 
-      outb(inputBytes[byteCount] & 0x00FF, base); // Outputs high byte to be written
+      outb(inputBytes[byteCount] & 0x00FF, BASE); // Outputs high byte to be written
       writeControl(0x0E, 100); // Writes high byte of byte
 
       writeControl(0xFF, 100); // SOMETHING PREPARING, SWITCH VOLTAGE ON?
@@ -95,9 +94,9 @@ void writeEPROM(FILE* inputFile)
 
 void writeControl(int hexCommand, int timePeriod)
 {
-  outb(hexCommand, ctrl); // Sets line high
+  outb(hexCommand, CTRL); // Sets line high
   msleep(timePeriod); // Time period
-  outb(0x00, ctrl); // Sets line low
+  outb(0x00, CTRL); // Sets line low
 }
 
 void msleep(int milliseconds)
@@ -108,16 +107,16 @@ void msleep(int milliseconds)
 
 int checkPorts()
 {
-  if (ioperm(base,1,1)) {
-    fprintf(stderr, "Couldn't get the port at %x\n", base);
+  if (ioperm(BASE,1,1)) {
+    fprintf(stderr, "Couldn't get the port at %x\n", BASE);
     return(1);
   }
-  if (ioperm(base,1,1)) {
-    fprintf(stderr, "Couldn't get the port at %x\n", stat);
+  if (ioperm(BASE,1,1)) {
+    fprintf(stderr, "Couldn't get the port at %x\n", STAT);
     return(1);
   }
-  if (ioperm(base,1,1)) {
-    fprintf(stderr, "Couldn't get the port at %x\n", ctrl);
+  if (ioperm(BASE,1,1)) {
+    fprintf(stderr, "Couldn't get the port at %x\n", CTRL);
     return(1);
   }
 
@@ -128,7 +127,7 @@ int checkPorts()
 int checkReady()
 {
   char flagReady; // Flag used to tell if hardware is ready
-  flagReady = inb(stat) & 0x80; // Gets flag from ready switch from hardware
+  flagReady = inb(STAT) & 0x80; // Gets flag from ready switch from hardware
 
   if(flagReady != 0x80)
   {
